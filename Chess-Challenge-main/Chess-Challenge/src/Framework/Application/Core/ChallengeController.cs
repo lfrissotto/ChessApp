@@ -100,6 +100,11 @@ namespace ChessChallenge.Application
             // Player Setup
             PlayerWhite = CreatePlayer(whiteType);
             PlayerBlack = CreatePlayer(blackType);
+
+            if(PlayerBlack.Human is null){
+                PlayerBlack.Bot.ConnectionHandler();
+            };
+
             PlayerWhite.SubscribeToMoveChosenEventIfHuman(OnMoveChosen);
             PlayerBlack.SubscribeToMoveChosenEventIfHuman(OnMoveChosen);
 
@@ -117,7 +122,7 @@ namespace ChessChallenge.Application
         {
             int threadID = gameID;
             //Console.WriteLine("Starting thread: " + threadID);
-
+            
             while (true)
             {
                 // Sleep thread until notified
@@ -147,7 +152,7 @@ namespace ChessChallenge.Application
             try
             {
                 API.Timer timer = new(PlayerToMove.TimeRemainingMs, PlayerNotOnMove.TimeRemainingMs, GameDurationMilliseconds, IncrementMilliseconds);
-                API.Move move = PlayerToMove.Bot.Think(botBoard, timer);
+                API.Move move = PlayerToMove.Bot.Think(botBoard, timer, true);
                 return new Move(move.RawValue);
             }
             catch (Exception e)
@@ -255,6 +260,11 @@ namespace ChessChallenge.Application
             {
                 bool animate = PlayerToMove.IsBot;
                 lastMoveMadeTime = (float)Raylib.GetTime();
+
+                string moveName = MoveUtility.GetMoveNameUCI(move);
+                Console.WriteLine("Move: " + move);
+                string log = $"Human move: {moveName} in position";
+                Log(log, true, ConsoleColor.Green);
 
                 board.MakeMove(move, false);
                 boardUI.UpdatePosition(board, move, animate);

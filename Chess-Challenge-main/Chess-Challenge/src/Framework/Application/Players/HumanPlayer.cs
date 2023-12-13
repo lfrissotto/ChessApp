@@ -1,6 +1,9 @@
 ﻿using ChessChallenge.Chess;
 using Raylib_cs;
 using System.Numerics;
+using System;
+using System.Threading;
+
 
 namespace ChessChallenge.Application
 {
@@ -33,6 +36,7 @@ namespace ChessChallenge.Application
         {
             board.LoadPosition(fen);
         }
+
 
         public void Update()
         {
